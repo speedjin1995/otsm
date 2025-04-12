@@ -3,25 +3,27 @@ require_once 'db_connect.php';
 
 $post = json_decode(file_get_contents('php://input'), true);
 
-$staffId = $post['userId'];
+//$staffId = $post['userId'];
 $now = date("Y-m-d 00:00:00");
 $end = date("Y-m-d 23:59:59");
 $values = array();
-/*$stmt2 = $db->prepare("SELECT * from users where id= ?");
-$stmt2->bind_param('s', $staffId);
-$stmt2->execute();
-$stmt2 = $stmt2->get_result();
 
-if(($row2 = $stmt2->fetch_assoc()) !== null){
-    if($row2['farms'] != null){
-        $values = json_decode($row2['farms'], true);
-    }  
-}*/
+$services = 'Load_Tasks';
+$requests = json_encode($post);
 
-//$stmt = $db->prepare("SELECT * from weighing WHERE created_datetime >= ?");
-$stmt = $db->prepare("SELECT * from weighing WHERE status<>'Complete' AND `deleted` = '0' ORDER BY `created_datetime`");
-//$stmt->bind_param('ss', $now, $end);
+$stmtL = $db->prepare("INSERT INTO api_requests (services, request) VALUES (?, ?)");
+$stmtL->bind_param('ss', $services, $requests);
+$stmtL->execute();
+$invid = $stmtL->insert_id;
+
+$staffId = $post['company'];
+
+$stmt = $db->prepare("SELECT * from weighing WHERE status<>'Complete' AND `deleted` = '0' AND company = '".$staffId."' ORDER BY `booking_date` DESC");
 $stmt->execute();
+
+//$stmt = $db->prepare("SELECT * from weighing WHERE status<>'Complete' AND `deleted` = '0' ORDER BY `created_datetime`");
+//$stmt->bind_param('ss', $now, $end);
+//$stmt->execute();
 $result = $stmt->get_result();
 $message = array();
 
@@ -46,6 +48,7 @@ while($row = $result->fetch_assoc()){
     $message[] = array( 
         'id'=>$row['id'],
         'serial_no'=>$row['serial_no'],
+        "booking_date"=>$row['booking_date'],
         'po_no'=>$row['po_no'],
         'group_no'=>$row['group_no'],
         'customer'=>$row['customer'],
@@ -68,7 +71,8 @@ while($row = $result->fetch_assoc()){
         'grade'=>$row['grade'],
         'gender'=>$row['gender'],
         'house_no'=>$row['house_no'],
-        'remark'=>$row['remark']
+        'remark'=>$row['remark'],
+        'status'=>$row['status']
     );
 }
 

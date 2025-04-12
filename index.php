@@ -1,7 +1,5 @@
 <?php
-require_once 'php/db_connect.php';
-
-session_start();
+require_once 'php/languageSetting.php';
 
 if(!isset($_SESSION['userID'])){
   echo '<script type="text/javascript">';
@@ -15,11 +13,15 @@ else{
 	$result = $stmt->get_result();
   $role = 'NORMAL';
   $name = '';
+  $language = 'en';
 	
 	if(($row = $result->fetch_assoc()) !== null){
     $role = $row['role_code'];
     $name = $row['name'];
+    $language = $row['languages'];
   }
+
+  $_SESSION['language'] = $language;
 }
 ?>
 
@@ -30,7 +32,7 @@ else{
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-  <title>CCB </title>
+  <title>DG Link</title>
 
   <link rel="icon" href="assets/logo.png" type="image">
   <!-- Font Awesome Icons -->
@@ -308,10 +310,10 @@ to get the desired effect
   <!--aside class="main-sidebar sidebar-dark-primary elevation-4"  style="background-color: #ffffff;"-->
   <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #3d44c1;">
     <!-- Brand Logo -->
-    <a href="#" class="brand-link logo-switch" style="line-height: 5;">
-      <img src="assets/logo.png" alt="Sneakercube Logo" class="brand-image-xl logo-xs">
-      <img src="assets/logo.png" alt="Sneakercube Logo" class="brand-image-xl logo-xl" style="width: 40%;max-height: max-content;">
-    </a>
+    <!--a href="#" class="brand-link logo-switch" style="line-height: 5;">
+      <img src="assets/logoSmall.jpeg" alt="Sneakercube Logo" class="brand-image-xl logo-xs">
+      <img src="assets/logoSmall.jpeg" alt="Sneakercube Logo" class="brand-image-xl logo-xl" style="width: 40%;max-height: max-content;">
+    </a-->
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -321,7 +323,7 @@ to get the desired effect
             <img src="assets/user-avatar.png" class="img-circle elevation-2" alt="User Image">
           </div>
           <div class="info" style="white-space: nowrap;">
-            <p style="font-size:0.75rem; color:#E3E3E3; margin-bottom:0rem; color:#1888CA">Welcome</p>
+            <p style="font-size:0.75rem; color:#E3E3E3; margin-bottom:0rem; color:#1888CA"><?=$languageArray['welcome_tab'][$language] ?></p>
             <a href="#myprofile" data-file="myprofile.php" id="goToProfile" class="d-block"><?=$name ?></a>
           </div>
       </div>
@@ -332,45 +334,125 @@ to get the desired effect
           <!-- Add icons to the links using the .nav-icon class
             with font-awesome or any other icon font library -->
           <li class="nav-item">
-            <a href="#companies" data-file="companies.php"  class="nav-link link">
-              <i class="nav-icon fas fa-building"></i>
-              <p>Companies</p>
+            <a href="#dashboard" data-file="dashboard.php" class="nav-link link">
+              <i class="nav-icon fas fa-chart-bar"></i>
+              <p><?=$languageArray['dashboard_code'][$language] ?></p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="#users" data-file="users.php" class="nav-link link">
-              <i class="nav-icon fas fa-user"></i>
-              <p>Users</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#indicators" data-file="indicators.php" class="nav-link link">
+          <!--li class="nav-item">
+            <a href="#weight" data-file="weightPage.php" class="nav-link link">
               <i class="nav-icon fas fa-chart-pie"></i>
-              <p>Indicators</p>
+              <p><?=$languageArray['weight_weighing_code'][$language] ?></p>
             </a>
-          </li>
+          </li-->
           <li class="nav-item">
-            <a href="#printers" data-file="printers.php" class="nav-link link">
-              <i class="nav-icon fas fa-print"></i>
-              <p>Printer</p>
+            <a href="#billboard" data-file="billboard.php" class="nav-link link">
+              <i class="nav-icon fas fa-book"></i>
+              <p><?=$languageArray['weighing_report_code'][$language] ?></p>
             </a>
           </li>
+          <?php 
+              if($role == "ADMIN"){
+                echo '<!--li class="nav-item">
+                <a href="#users" data-file="users.php" class="nav-link link">
+                  <i class="nav-icon fas fa-user"></i>
+                  <p>'.$languageArray['staff_code'][$language].'</p>
+                </a>
+              </li>
+              <li class="nav-item has-treeview">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon fas fa-database"></i>
+                  <p>'.$languageArray['master_data_code'][$language].'<i class="fas fa-angle-left right"></i></p>
+                </a>
+                <ul class="nav nav-treeview" style="display: none;">
+                  <li class="nav-item">
+                    <a href="#customers" data-file="customers.php" class="nav-link link">
+                      <i class="nav-icon fas fa-book"></i>
+                      <p>'.$languageArray['customer_code'][$language].'</p>
+                    </a>
+                  </li>';
+                  /*<li class="nav-item">
+                    <a href="#suppliers" data-file="suppliers.php" class="nav-link link">
+                      <i class="nav-icon fas fa-book"></i>
+                      <p>'.$languageArray['supplier_code'][$language].'</p>
+                    </a>
+                  </li>*/
+                  echo '<li class="nav-item">
+                    <a href="#products" data-file="products.php" class="nav-link link">
+                      <i class="nav-icon fas fa-shopping-cart"></i>
+                      <p>'.$languageArray['product_code'][$language].'</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#vehicles" data-file="vehicles.php" class="nav-link link">
+                      <i class="nav-icon fas fa-car"></i>
+                      <p>'.$languageArray['vehicle_code'][$language].'</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#transporters" data-file="transport.php" class="nav-link link">
+                      <i class="nav-icon fas fa-box"></i>
+                      <p>'.$languageArray['transporter_code'][$language].'</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#grades" data-file="grades.php" class="nav-link link">
+                      <i class="nav-icon fas fa-balance-scale"></i>
+                      <p>'.$languageArray['grade_code'][$language].'</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#farms" data-file="farms.php" class="nav-link link">
+                      <i class="nav-icon fas fa-shopping-bag"></i>
+                      <p>'.$languageArray['farm_code'][$language].'</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#message" data-file="message.php" class="nav-link link">
+                      <i class="nav-icon fas fa-comments"></i>
+                      <p>'.$languageArray['message_resource_code'][$language].'</p>
+                    </a>
+                  </li>
+                </ul>
+              </li-->';
+                  /*<li class="nav-item">
+                    <a href="#groups" data-file="groups.php" class="nav-link link">
+                      <i class="nav-icon fas fa-store"></i>
+                      <p>Groups</p>
+                    </a>
+                  </li>*/
+                
+              }
+          ?>
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-cogs"></i>
-              <p>Settings<i class="fas fa-angle-left right"></i></p>
+              <p><?=$languageArray['setting_code'][$language] ?><i class="fas fa-angle-left right"></i></p>
             </a>
+        
             <ul class="nav nav-treeview" style="display: none;">
-              <li class="nav-item">
+              <?php 
+                if($role == "ADMIN"){
+                  echo '<!--li class="nav-item">
+                  <a href="#company" data-file="company.php" class="nav-link link">
+                    <i class="nav-icon fas fa-building"></i>
+                    <p>'.$languageArray['company_profile_code'][$language].'</p>
+                  </a>
+                </li-->';
+                }
+              ?>
+
+              <!--li class="nav-item">
                 <a href="#myprofile" data-file="myprofile.php" class="nav-link link">
                   <i class="nav-icon fas fa-id-badge"></i>
-                  <p>Profile</p>
+                  <p><?=$languageArray['profile_code'][$language] ?></p>
                 </a>
-              </li>
+              </li-->
+          
               <li class="nav-item">
                 <a href="#changepassword" data-file="changePassword.php" class="nav-link link">
                   <i class="nav-icon fas fa-key"></i>
-                  <p>Change Password</p>
+                  <p><?=$languageArray['change_password'][$language] ?></p>
                 </a>
               </li>
             </ul>
@@ -378,7 +460,7 @@ to get the desired effect
           <li class="nav-item">
             <a href="php/logout.php" class="nav-link">
               <i class="nav-icon fas fa-sign-out-alt"></i>
-              <p>Logout</p>
+              <p><?=$languageArray['logout_code'][$language] ?></p>
             </a>
           </li>
         </ul>
@@ -402,7 +484,7 @@ to get the desired effect
 
   <!-- Main Footer -->
   <footer class="main-footer">
-    <strong>Copyright &copy; 2022 <a href="#">SyncWeight</a>.</strong>All rights reserved.<div class="float-right d-none d-sm-inline-block"><b>Version</b> 1.0.0 </div>
+    <strong>Copyright &copy; 2024 <a href="#">SyncWeight</a>.</strong>All rights reserved.<div class="float-right d-none d-sm-inline-block"><b>Version</b> 1.0.0 </div>
   </footer>
 </div>
 <!-- ./wrapper -->
@@ -423,11 +505,11 @@ to get the desired effect
 <script src="plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
 <script src="plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
 <script src="plugins/toastr/toastr.min.js"></script>
+<script src="plugins/moment/moment.min.js"></script>
 <script src="plugins/daterangepicker/daterangepicker.js"></script>
 <script src="plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 <script src="plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
 <script src="plugins/chart.js/Chart.min.js"></script>
-<script src="plugins/daterangepicker/daterangepicker.js"></script>
 <script src="plugins/sheets/xlsx.full.min.js"></script>
 
 <script>
@@ -474,8 +556,38 @@ $(function () {
       });
   });
   
-  $("a[href='#companies']").click();
+  $("a[href='#<?=$_SESSION['page']?>']").click();
 });
+
+function formatDate(date) {
+  var d = new Date(date),
+  month = '' + (d.getMonth() + 1),
+  day = '' + d.getDate(),
+  year = d.getFullYear();
+
+  if (month.length < 2) 
+    month = '0' + month;
+
+  if (day.length < 2) 
+    day = '0' + day;
+
+  return [year, month, day].join('-');
+}
+
+function formatDate2(date) {
+  var d = new Date(date),
+  month = '' + (d.getMonth() + 1),
+  day = '' + d.getDate(),
+  year = d.getFullYear();
+
+  if (month.length < 2) 
+    month = '0' + month;
+
+  if (day.length < 2) 
+    day = '0' + day;
+
+  return [day, month, year].join('/');
+}
 </script>
 </body>
 </html>

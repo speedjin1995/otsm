@@ -9,17 +9,24 @@ if(!isset($_SESSION['userID'])){
 }
 else{
     $userId = $_SESSION['userID'];
+    $company = $_SESSION['customer'];
 }
 
-if(isset($_POST['username'], $_POST['name'], $_POST['userRole'], $_POST['customer'])){
+if(isset($_POST['username'], $_POST['name'], $_POST['userRole'])){
     $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
 	$name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
     $roleCode = filter_input(INPUT_POST, 'userRole', FILTER_SANITIZE_STRING);
-    $customer = filter_input(INPUT_POST, 'customer', FILTER_SANITIZE_STRING);
+    $farms = array();
+
+    if(isset($_POST['farm']) && $_POST['farm'] != null){
+        $farms = $_POST['farm'];
+    }
+
+    $farms = json_encode($farms);
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE users SET username=?, name=?, role_code=?, customer=? WHERE id=?")) {
-            $update_stmt->bind_param('sssss', $username, $name, $roleCode, $customer, $_POST['id']);
+        if ($update_stmt = $db->prepare("UPDATE users SET username=?, name=?, role_code=?, farms=? WHERE id=?")) {
+            $update_stmt->bind_param('sssss', $username, $name, $roleCode, $farms, $_POST['id']);
             
             // Execute the prepared query.
             if (! $update_stmt->execute()) {
@@ -48,8 +55,8 @@ if(isset($_POST['username'], $_POST['name'], $_POST['userRole'], $_POST['custome
         $password = '123456';
         $password = hash('sha512', $password . $random_salt);
 
-        if ($insert_stmt = $db->prepare("INSERT INTO users (username, name, password, salt, created_by, role_code, customer) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
-            $insert_stmt->bind_param('sssssss', $username, $name, $password, $random_salt, $userId, $roleCode, $customer);
+        if ($insert_stmt = $db->prepare("INSERT INTO users (username, name, password, salt, created_by, role_code, farms, customer) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
+            $insert_stmt->bind_param('ssssssss', $username, $name, $password, $random_salt, $userId, $roleCode, $farms, $company);
             
             // Execute the prepared query.
             if (! $insert_stmt->execute()) {

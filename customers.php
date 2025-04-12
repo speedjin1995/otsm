@@ -1,14 +1,14 @@
 <?php
-require_once 'php/db_connect.php';
-
-session_start();
+require_once 'php/languageSetting.php';
 
 if(!isset($_SESSION['userID'])){
   echo '<script type="text/javascript">';
   echo 'window.location.href = "login.html";</script>';
 }
 else{
+  $language = $_SESSION['language'];
   $user = $_SESSION['userID'];
+  $_SESSION['page']='customers';
   $states = $db->query("SELECT * FROM states");
 }
 ?>
@@ -17,7 +17,7 @@ else{
     <div class="container-fluid">
         <div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Customers</h1>
+				<h1 class="m-0 text-dark"><?=$languageArray['customer_code'][$language] ?></h1>
 			</div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -37,10 +37,10 @@ else{
                       <input type="file" id="fileInput" accept=".xlsx, .xls" />
                   </div>
                   <div class="col-2">
-                      <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="importExcelbtn">Import Excel</button>
+                      <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="importExcelbtn"><?=$languageArray['import_excel_code'][$language] ?></button>
                   </div>                            
                   <div class="col-3">
-                      <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addCustomers">Add Customers</button>
+                      <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addCustomers"><?=$languageArray['add_customers_code'][$language] ?></button>
                   </div>
               </div>
           </div>
@@ -70,7 +70,7 @@ else{
       <div class="modal-content">
         <form role="form" id="customerForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Customers</h4>
+              <h4 class="modal-title"><?=$languageArray['import_excel_code'][$language] ?></h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -81,34 +81,34 @@ else{
                   <input type="hidden" class="form-control" id="id" name="id">
                 </div>
                 <div class="form-group">
-                  <label for="code">Customer Code *</label>
+                  <label for="code"><?=$languageArray['customer_code_code'][$language] ?> *</label>
                   <input type="text" class="form-control" name="code" id="code" placeholder="Enter Customer Code" maxlength="10" required>
                 </div>
                 <div class="form-group">
-                  <label for="name">Reg No. </label>
+                  <label for="name"><?=$languageArray['reg_no_code'][$language] ?> </label>
                   <input type="text" class="form-control" name="reg_no" id="reg_no" placeholder="Enter Registration No">
                 </div>
                 <div class="form-group">
-                  <label for="name">Customer Name *</label>
+                  <label for="name"><?=$languageArray['customer_name_code'][$language] ?> *</label>
                   <input type="text" class="form-control" name="name" id="name" placeholder="Enter Customer Name" required>
                 </div>
                 <div class="form-group"> 
-                  <label for="address">Address </label>
+                  <label for="address"><?=$languageArray['address_code'][$language] ?> </label>
                   <input type="text" class="form-control" name="address" id="address" placeholder="Enter  Address">
                 <div class="form-group"> 
-                  <label for="address">Address 2</label>
+                  <label for="address"><?=$languageArray['address_code'][$language] ?> 2</label>
                   <input type="text" class="form-control" name="address2" id="address2" placeholder="Enter  Address">
                 </div>
                 <div class="form-group"> 
-                  <label for="address">Address 3</label>
+                  <label for="address"><?=$languageArray['address_code'][$language] ?> 3</label>
                   <input type="text" class="form-control" name="address3" id="address3" placeholder="Enter  Address">
                 </div>
                 <div class="form-group"> 
-                  <label for="address">Address 4</label>
+                  <label for="address"><?=$languageArray['address_code'][$language] ?> 4</label>
                   <input type="text" class="form-control" name="address4" id="address4" placeholder="Enter  Address">
                 </div>
                 <div class="form-group">
-                  <label>States</label>
+                  <label><?=$languageArray['states_code'][$language] ?></label>
                   <select class="form-control" style="width: 100%;" id="states" name="states">
                     <option selected="selected">-</option>
                     <?php while($rowCustomer2=mysqli_fetch_assoc($states)){ ?>
@@ -117,18 +117,18 @@ else{
                   </select>
                 </div>
                 <div class="form-group">
-                  <label for="phone">Phone </label>
+                  <label for="phone"><?=$languageArray['phone_code'][$language] ?> </label>
                   <input type="text" class="form-control" name="phone" id="phone" placeholder="01x-xxxxxxx">
                 </div>
                 <div class="form-group"> 
-                  <label for="email">PIC </label>
+                  <label for="email"><?=$languageArray['pic_code'][$language] ?> </label>
                   <input type="text" class="form-control" id="email" name="email" placeholder="Enter your PIC">
                 </div>
               </div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary" name="submit" id="submitMember">Submit</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal"><?=$languageArray['close_code'][$language] ?></button>
+              <button type="submit" class="btn btn-primary" name="submit" id="submitMember"><?=$languageArray['save_code'][$language] ?></button>
             </div>
         </form>
       </div>
@@ -234,8 +234,8 @@ $(function () {
       const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: 'array' });
 
-      const sheetName = workbook.SheetNames[1];
-      const sheet = workbook.Sheets[sheetName];
+      //const sheetName = workbook.SheetNames[1];
+      const sheet = workbook.Sheets['Customer'];
       jsonData = XLSX.utils.sheet_to_json(sheet);
       console.log(jsonData);
     };
@@ -250,7 +250,6 @@ $(function () {
                 contentType: 'application/json',
                 data: JSON.stringify(row),
                 success: function(response) {
-                    debugger;
                     var obj = JSON.parse(response); 
                     
                     if(obj.status === 'success'){

@@ -249,11 +249,11 @@
 </head>
 
 <body class="hold-transition sidebar-mini">
-<!--div class="loading" id="spinnerLoading">
+<div class="loading" id="spinnerLoading">
   <div class='uil-ring-css' style='transform:scale(0.79);'>
     <div></div>
   </div>
-</div-->
+</div>
 
 <div class="wrapper">
   <div class="content-wrapper" id="mainContents">
@@ -286,8 +286,10 @@
 						<table id="productTable" class="table table-bordered table-striped">
 							<thead>
 								<tr>
-                  <th>Product Name</th>
-                  <th>Remark</th>
+                                    <th>Code</th>
+									<th>Chicken Description</th>
+									<th>Farm ID</th>
+                                    <th>Remark</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -317,8 +319,16 @@
                   <input type="hidden" class="form-control" id="id" name="id">
                 </div>
                 <div class="form-group">
-                  <label for="product">Product Name *</label>
+                  <label for="code">Product Code *</label>
+                  <input type="text" class="form-control" name="code" id="code" placeholder="Enter Product Code" maxlength="10" required>
+                </div>
+                <div class="form-group">
+                  <label for="product">Chicken Description *</label>
                   <input type="text" class="form-control" name="product" id="product" placeholder="Enter Product Name" required>
+                </div>
+                <div class="form-group"> 
+                  <label for="price">Farm ID *</label>
+                  <input type="text"  class="form-control" id="price" name="price" placeholder="Enter Product Price" required>
                 </div>
                 <div class="form-group"> 
                   <label for="remark">Remark </label>
@@ -389,7 +399,9 @@ $(function () {
             'url':'php/loadProducts.php'
         },
         'columns': [
+            { data: 'product_code' },
             { data: 'product_name' },
+            { data: 'farm_id' },
             { data: 'remark' },
             { 
                 data: 'id',
@@ -406,7 +418,7 @@ $(function () {
     
     $.validator.setDefaults({
         submitHandler: function () {
-            //$('#spinnerLoading').show();
+            $('#spinnerLoading').show();
             $.post('php/products.php', $('#productForm').serialize(), function(data){
                 var obj = JSON.parse(data); 
                 
@@ -414,25 +426,27 @@ $(function () {
                   $('#addModal').modal('hide');
                   toastr["success"](obj.message, "Success:");
                   $('#productTable').DataTable().ajax.reload();
-                  //$('#spinnerLoading').hide();
+                  $('#spinnerLoading').hide();
                 }
                 else if(obj.status === 'failed'){
                     toastr["error"](obj.message, "Failed:");
-                    //$('#spinnerLoading').hide();
+                    $('#spinnerLoading').hide();
                 }
                 else{
                     toastr["error"]("Something wrong when edit", "Failed:");
-                    //$('#spinnerLoading').hide();
+                    $('#spinnerLoading').hide();
                 }
             });
         }
     });
 
-    //$('#spinnerLoading').hide();
+    $('#spinnerLoading').hide();
 
     $('#addProducts').on('click', function(){
         $('#addModal').find('#id').val("");
+        $('#addModal').find('#code').val("");
         $('#addModal').find('#product').val("");
+        $('#addModal').find('#price').val("");
         $('#addModal').find('#remark').val("");
         $('#addModal').modal('show');
         
@@ -453,13 +467,15 @@ $(function () {
 });
 
 function edit(id){
-    //$('#spinnerLoading').show();
+    $('#spinnerLoading').show();
     $.post('php/getProduct.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
             $('#addModal').find('#id').val(obj.message.id);
+            $('#addModal').find('#code').val(obj.message.product_code);
             $('#addModal').find('#product').val(obj.message.product_name);
+            $('#addModal').find('#price').val(obj.message.farm_id);
             $('#addModal').find('#remark').val(obj.message.remark);
             $('#addModal').modal('show');
             
@@ -483,30 +499,28 @@ function edit(id){
         else{
             toastr["error"]("Something wrong when activate", "Failed:");
         }
-        //$('#spinnerLoading').hide();
+        $('#spinnerLoading').hide();
     });
 }
 
 function deactivate(id){
-  if (confirm('Are you sure you want to delete this items?')) {
-    //$('#spinnerLoading').show();
+    $('#spinnerLoading').show();
     $.post('php/deleteProduct.php', {userID: id}, function(data){
         var obj = JSON.parse(data);
         
         if(obj.status === 'success'){
           toastr["success"](obj.message, "Success:");
           $('#productTable').DataTable().ajax.reload();
-          //$('#spinnerLoading').hide();
+          $('#spinnerLoading').hide();
         }
         else if(obj.status === 'failed'){
             toastr["error"](obj.message, "Failed:");
-            //$('#spinnerLoading').hide();
+            $('#spinnerLoading').hide();
         }
         else{
             toastr["error"]("Something wrong when activate", "Failed:");
-            //$('#spinnerLoading').hide();
+            $('#spinnerLoading').hide();
         }
     });
-  }
 }
 </script>

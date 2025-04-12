@@ -1,18 +1,20 @@
 <?php
-require_once 'php/db_connect.php';
-
-session_start();
+require_once 'php/languageSetting.php';
 
 if(!isset($_SESSION['userID'])){
     echo '<script type="text/javascript">';
 	echo 'window.location.href = "../login.html";</script>';
 }
 else{
-    $stmt2 = $db->prepare("SELECT * FROM roles WHERE deleted = '0'");
+    /*$stmt = $db->prepare("SELECT users.id, users.name, users.email, users.joined_date, users.expired_date, users.status, roles.role_name from users, roles WHERE users.role_code = roles.role_code");
+    $stmt->execute();
+    $result = $stmt->get_result();*/
+    $language = $_SESSION['language'];
+    $_SESSION['page']='users';
+    $stmt2 = $db->prepare("SELECT * FROM roles");
     $stmt2->execute();
     $result2 = $stmt2->get_result();
-
-    $companies = $db->query("SELECT * FROM companies WHERE deleted = '0'");
+    $farms = $db->query("SELECT * FROM farms WHERE deleted = '0'");
 }
 ?>
 
@@ -20,7 +22,7 @@ else{
     <div class="container-fluid">
         <div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Members</h1>
+				<h1 class="m-0 text-dark"><?=$languageArray['staff_code'][$language] ?></h1>
 			</div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -35,9 +37,15 @@ else{
 				<div class="card">
 					<div class="card-header">
                         <div class="row">
-                            <div class="col-9"></div>
+                            <div class="col-5"></div>
+                            <div class="col-2">
+                                <input type="file" id="fileInput" accept=".xlsx, .xls" />
+                            </div>
+                            <div class="col-2">
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="importExcelbtn"><?=$languageArray['import_excel_code'][$language] ?></button>
+                            </div>                            
                             <div class="col-3">
-                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addMembers">Add Members</button>
+                                <button type="button" class="btn btn-block bg-gradient-warning btn-sm" id="addMembers"><?=$languageArray['add_members'][$language] ?></button>
                             </div>
                         </div>
                     </div>
@@ -48,7 +56,6 @@ else{
 									<th>Username</th>
 									<th>Name</th>
 									<th>Role</th>
-                                    <th>Company</th>
 									<th>Created Date</th>
 									<th>Actions</th>
 								</tr>
@@ -66,7 +73,7 @@ else{
       <div class="modal-content">
         <form role="form" id="memberForm">
             <div class="modal-header">
-              <h4 class="modal-title">Add Members</h4>
+              <h4 class="modal-title"><?=$languageArray['add_members'][$language] ?></h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -77,15 +84,15 @@ else{
     					<input type="hidden" class="form-control" id="id" name="id">
     				</div>
     				<div class="form-group">
-    					<label for="username">Username *</label>
+    					<label for="username"><?=$languageArray['username_code'][$language] ?> *</label>
     					<input type="text" class="form-control" name="username" id="username" placeholder="Enter Username" required>
     				</div>
                     <div class="form-group">
-    					<label for="name">Name *</label>
+    					<label for="name"><?=$languageArray['name_code'][$language] ?> *</label>
     					<input type="text" class="form-control" name="name" id="name" placeholder="Enter Full Name" required>
     				</div>
                     <div class="form-group">
-						<label>Role *</label>
+						<label><?=$languageArray['role_code'][$language] ?> *</label>
 						<select class="form-control" id="userRole" name="userRole" required>
 						    <option select="selected" value="">Please Select</option>
 						    <?php while($row2 = $result2->fetch_assoc()){ ?>
@@ -94,10 +101,9 @@ else{
 						</select>
 					</div>
                     <div class="form-group">
-						<label>Company *</label>
-						<select class="form-control" id="customer" name="customer" required>
-						    <option select="selected" value="">Please Select</option>
-						    <?php while($rowCustomer2=mysqli_fetch_assoc($companies)){ ?>
+						<label><?=$languageArray['farm_code'][$language] ?></label>
+						<select class="select2" id="farm" name="farm[]" multiple="multiple">
+						    <?php while($rowCustomer2=mysqli_fetch_assoc($farms)){ ?>
     							<option value="<?= $rowCustomer2['id'] ?>"><?= $rowCustomer2['name'] ?></option>
 							<?php } ?>
 						</select>
@@ -105,8 +111,8 @@ else{
     			</div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary" name="submit" id="submitMember">Submit</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal"><?=$languageArray['close_code'][$language] ?></button>
+              <button type="submit" class="btn btn-primary" name="submit" id="submitMember"><?=$languageArray['save_code'][$language] ?></button>
             </div>
         </form>
       </div>
@@ -117,7 +123,12 @@ else{
 
 <script>
 $(function () {
+
     let jsonData = "";
+
+    $('.select2').select2({
+        allowClear: true
+    })
 
     $("#memberTable").DataTable({
         "responsive": true,
@@ -132,7 +143,6 @@ $(function () {
             { data: 'username' },
             { data: 'name' },
             { data: 'role_name' },
-            { data: 'company' },
             { data: 'created_date' },
             { 
                 data: 'id',
@@ -176,7 +186,7 @@ $(function () {
         $('#addModal').find('#username').val("");
         $('#addModal').find('#name').val("");
         $('#addModal').find('#userRole').val("");
-        $('#addModal').find('#customer').val("");
+        $('#addModal').find('#farm').select2('destroy').val('').select2();
         $('#addModal').modal('show');
         
         $('#memberForm').validate({
@@ -194,23 +204,23 @@ $(function () {
         });
     });
 
-    document.getElementById('fileInput').addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        const reader = new FileReader();
+  document.getElementById('fileInput').addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
 
-        reader.onload = function (e) {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
+    reader.onload = function (e) {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
 
-            const sheetName = workbook.SheetNames[0];
-            const sheet = workbook.Sheets[sheetName];
-            jsonData = XLSX.utils.sheet_to_json(sheet);
-            console.log(jsonData);
-        };
-        reader.readAsArrayBuffer(file);
-    });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      jsonData = XLSX.utils.sheet_to_json(sheet);
+      console.log(jsonData);
+    };
+    reader.readAsArrayBuffer(file);
+  });
 
-    $('#importExcelbtn').on('click', function(){
+  $('#importExcelbtn').on('click', function(){
         jsonData.forEach(function(row) {
             $.ajax({
                 url: 'php/importExcelMember.php',
@@ -218,7 +228,6 @@ $(function () {
                 contentType: 'application/json',
                 data: JSON.stringify(row),
                 success: function(response) {
-                    debugger;
                     var obj = JSON.parse(response); 
                     
                     if(obj.status === 'success'){
@@ -241,7 +250,7 @@ $(function () {
                     $('#spinnerLoading').hide();
                 }
             })
-        });
+        })
     });
 });
 
@@ -255,7 +264,7 @@ function edit(id){
             $('#addModal').find('#username').val(obj.message.username);
             $('#addModal').find('#name').val(obj.message.name);
             $('#addModal').find('#userRole').val(obj.message.role_code);
-            $('#addModal').find('#customer').val(obj.message.customer);
+            $('#addModal').find("select[name='farm[]']").val(obj.message.farms).trigger('change');
             $('#addModal').modal('show');
             
             $('#memberForm').validate({

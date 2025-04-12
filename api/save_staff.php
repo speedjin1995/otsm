@@ -5,20 +5,19 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 session_start();
 $post = json_decode(file_get_contents('php://input'), true);
 
-if(isset($post['staffName'], $post['customer'])){
+if(isset($post['staffName'])){
 	$staffName = $post['staffName'];
-	$customer = $post['customer'];
 
 	if(isset($post['userId']) && $post['userId'] != null && $post['userId'] != ''){
 	    if ($update_stmt = $db->prepare("UPDATE staff SET staff_name = ? WHERE id = ?")) {
             $update_stmt->bind_param('ss', $staffName, $post['userId']);
             
             // Execute the prepared query.
-            if (! $update_stmt->execute()) {
+            if (! $select_stmt->execute()) {
                 echo json_encode(
                     array(
                         "status" => "failed",
-                        "message" => $update_stmt->error
+                        "message" => "Failed to get latest count"
                     )); 
             }
             else{
@@ -33,8 +32,8 @@ if(isset($post['staffName'], $post['customer'])){
 		}
 	}
 	else{
-	    if ($insert_stmt = $db->prepare("INSERT INTO staff (staff_name, customer) VALUES (?, ?)")){	
-    	    $insert_stmt->bind_param('ss', $staffName, $customer);		
+	    if ($insert_stmt = $db->prepare("INSERT INTO staff (staff_name) VALUES (?)")){	
+    	    $insert_stmt->bind_param('s', $staffName);		
     		// Execute the prepared query.
     		if (! $insert_stmt->execute()){
     			echo json_encode(

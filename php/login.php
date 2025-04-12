@@ -7,7 +7,7 @@ $username=$_POST['userEmail'];
 $password=$_POST['userPassword'];
 $now = date("Y-m-d H:i:s");
 
-$stmt = $db->prepare("SELECT * from users where username= ?");
+$stmt = $db->prepare("SELECT * from users where username= ? and deleted = '0'");
 $stmt->bind_param('s', $username);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -17,6 +17,9 @@ if(($row = $result->fetch_assoc()) !== null){
 	
 	if($password == $row['password']){
 		$_SESSION['userID']=$row['id'];
+		$_SESSION['role_code']=$row['role_code'];
+		$_SESSION['customer']=$row['customer'];
+		$_SESSION['page']='dashboard';
 		$stmt->close();
 		$db->close();
 		
