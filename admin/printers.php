@@ -76,7 +76,7 @@ else{
                 </div>
                 <div class="form-group">
                     <label for="code">Printers *</label>
-                    <input type="text" class="form-control" name="code" id="code" placeholder="Enter Indicators" required>
+                    <input type="text" class="form-control" name="code" id="code" placeholder="Enter Printer" required>
                 </div>
                 <div class="form-group">
                     <label for="mac">MAC Address *</label>

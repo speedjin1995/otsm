@@ -1,2 +1,2 @@
-# dglink_admin
- This is for DG Link Livestock Admin Portal
+# OTSM_admin
+ This is for OTSM Livestock Admin Portal

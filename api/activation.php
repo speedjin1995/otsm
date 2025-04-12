@@ -46,7 +46,7 @@ if(isset($post['userEmail'], $post['userPassword'], $post['userKey'])){
     }
     
     // Check mac
-    /*$stmt3 = $db->prepare("SELECT * from indicators where mac_address= ?");
+    /*$stmt3 = $db->prepare("SELECT * from scales where mac_address= ?");
     $stmt3->bind_param('s', $mac_address);
     $stmt3->execute();
     $result3 = $stmt3->get_result();
@@ -62,7 +62,7 @@ if(isset($post['userEmail'], $post['userPassword'], $post['userKey'])){
             $update_stmt->execute();
 		}
 		
-		/*if ($update_stmt2 = $db->prepare("UPDATE indicators SET users = ? WHERE mac_address = ? OR udid = ?")) {
+		/*if ($update_stmt2 = $db->prepare("UPDATE scales SET users = ? WHERE mac_address = ? OR udid = ?")) {
             $update_stmt2->bind_param('sss', $uid, $mac_address, $mac_address);
             $update_stmt2->execute();
 		}*/

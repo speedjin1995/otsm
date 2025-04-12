@@ -6,7 +6,7 @@ $now = date("Y-m-d H:i:s");
 $staffId = $post['userId'];
 $userId = $post['uid'];
 
-$stmt = $db->prepare("SELECT * from indicators WHERE customer='".$staffId."'");
+$stmt = $db->prepare("SELECT * from scales WHERE customer='".$staffId."'");
 $stmt->execute();
 $result = $stmt->get_result();
 $message = array();

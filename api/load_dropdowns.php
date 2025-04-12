@@ -22,7 +22,7 @@ $customers = $db->query("SELECT * FROM customers WHERE deleted = '0' AND custome
 $suppliers = $db->query("SELECT * FROM supplies WHERE deleted = '0' AND customer='".$staffId."'");
 $grades = $db->query("SELECT * FROM grades WHERE deleted = '0' AND customer='".$staffId."'");
 $transporters = $db->query("SELECT * FROM `transporters` WHERE deleted = '0' AND customer='".$staffId."'");
-$indicators = $db->query("SELECT * FROM `indicators`");
+$indicators = $db->query("SELECT * FROM `scales`");
 
 $data1 = array();
 $data2 = array();

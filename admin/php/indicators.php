@@ -11,7 +11,7 @@ if(isset($_POST['code'], $_POST['mac'], $_POST['udid'], $_POST['customer'], $_PO
     $users = filter_input(INPUT_POST, 'users', FILTER_SANITIZE_STRING);
 
     if($_POST['id'] != null && $_POST['id'] != ''){
-        if ($update_stmt = $db->prepare("UPDATE indicators SET name=?, mac_address=?, udid=?, customer=?, users=? WHERE id=?")) {
+        if ($update_stmt = $db->prepare("UPDATE scales SET name=?, mac_address=?, udid=?, customer=?, users=? WHERE id=?")) {
             $update_stmt->bind_param('ssssss', $name, $mac_address, $udid, $customer, $users, $_POST['id']);
             
             // Execute the prepared query.
@@ -37,7 +37,7 @@ if(isset($_POST['code'], $_POST['mac'], $_POST['udid'], $_POST['customer'], $_PO
         }
     }
     else{
-        if ($insert_stmt = $db->prepare("INSERT INTO indicators (name, mac_address, udid, customer, users) VALUES (?, ?, ?, ?, ?)")) {
+        if ($insert_stmt = $db->prepare("INSERT INTO scales (name, mac_address, udid, customer, users) VALUES (?, ?, ?, ?, ?)")) {
             $insert_stmt->bind_param('sssss', $name, $mac_address, $udid, $customer, $users);
             
             // Execute the prepared query.

@@ -14,21 +14,21 @@ $searchValue = mysqli_real_escape_string($db,$_POST['search']['value']); // Sear
 ## Search 
 $searchQuery = " ";
 if($searchValue != ''){
-   $searchQuery = " AND indicators.name like '%".$searchValue."%' OR companies.name like '%".$searchValue."%'";
+   $searchQuery = " AND scales.name like '%".$searchValue."%' OR companies.name like '%".$searchValue."%'";
 }
 
 ## Total number of records without filtering
-$sel = mysqli_query($db,"select count(*) as allcount from indicators, companies, users WHERE indicators.customer = companies.id AND indicators.users = users.id");
+$sel = mysqli_query($db,"select count(*) as allcount from scales");
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 ## Total number of record with filtering
-$sel = mysqli_query($db,"select count(*) as allcount from indicators, companies, users WHERE indicators.customer = companies.id AND indicators.users = users.id".$searchQuery);
+$sel = mysqli_query($db,"select count(*) as allcount from scales WHERE 1=1".$searchQuery);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
 ## Fetch records
-$empQuery = "select indicators.*, companies.name as customer, users.name as user from indicators, companies, users WHERE indicators.customer = companies.id AND indicators.users = users.id".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
+$empQuery = "select * from scales WHERE 1=1".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($db, $empQuery);
 $data = array();
 
@@ -38,8 +38,8 @@ while($row = mysqli_fetch_assoc($empRecords)) {
       "name"=>$row['name'],
       "mac_address"=>$row['mac_address'],
       "udid"=>$row['udid'],
-      "customer"=>$row['customer'],
-      "user"=>$row['user']
+      //"customer"=>$row['customer'],
+      //"user"=>$row['user']
     );
 }
 

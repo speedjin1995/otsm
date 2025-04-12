@@ -6,7 +6,7 @@ session_start();
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 
-    if ($update_stmt = $db->prepare("SELECT * FROM indicators WHERE id=?")) {
+    if ($update_stmt = $db->prepare("SELECT * FROM scales WHERE id=?")) {
         $update_stmt->bind_param('s', $id);
         
         // Execute the prepared query.
@@ -26,8 +26,6 @@ if(isset($_POST['userID'])){
                 $message['name'] = $row['name'];
                 $message['mac_address'] = $row['mac_address'];
                 $message['udid'] = $row['udid'];
-                $message['customer'] = $row['customer'];
-                $message['users'] = $row['users'];
             }
             
             echo json_encode(
