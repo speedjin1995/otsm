@@ -6,7 +6,7 @@ session_start();
 if(isset($_POST['userID'])){
 	$id = filter_input(INPUT_POST, 'userID', FILTER_SANITIZE_STRING);
 	
-	if ($stmt2 = $db->prepare("DELETE FROM indicators SET WHERE id=?")) {
+	if ($stmt2 = $db->prepare("DELETE FROM scales SET WHERE id=?")) {
 		$stmt2->bind_param('s', $id);
 		
 		if($stmt2->execute()){
